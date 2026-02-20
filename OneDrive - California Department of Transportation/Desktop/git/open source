@@ -1,0 +1,38 @@
+MQTT Layer
+
+Tool: https://www.emqx.io/
+License: Apache 2.0
+Why open-source: EMQX offers a fully open-source broker with clustering, TLS, and authentication features. No proprietary lock-in; you can self-host without paying for a commercial license.
+
+
+✅ Transport & Buffering
+
+Tool: https://kafka.apache.org/
+License: Apache 2.0
+Why open-source: Kafka is maintained by the Apache Software Foundation. Its core broker, Connect, and Streams libraries are all open-source.
+
+
+✅ Stream Processing
+
+Tool: https://ksqldb.io/
+License: Confluent Community License (free for self-hosted use)
+Why open-source: ksqlDB is built on Kafka Streams and available for free under a permissive license for on-prem or personal deployments.
+
+
+✅ Time-Series Storage
+
+Tool: https://www.timescale.com/
+License: Timescale License (open-source core, free for self-hosted use)
+Why open-source: TimescaleDB is a PostgreSQL extension. Its core hypertable and continuous aggregate features are free and open-source.
+
+
+✅ Visualization
+
+Tool: https://grafana.com/
+License: AGPL v3
+Why open-source: Grafana’s dashboards and plugins are fully open-source, widely used for IoT and telemetry visualization.
+
+
+✅ Integration & Security
+
+TLS 1.3, X.509 certificates, Python clients (e.g., Paho MQTT) are all open-source libraries.
