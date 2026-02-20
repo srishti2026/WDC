@@ -1,0 +1,163 @@
+flowchart LR
+  subgraph Edge["Edge (Converters)"]
+    S1[Voltage/Current/Temp<br/>10 kHz] --> G1[MQTT Client<br/>TLS 1.3, QoS 1]
+  end
+
+  G1 -->|Publish| B1[EMQX Broker Cluster<br/>X.509 Auth]
+  B1 -->|Bridge| K1["Kafka Cluster (3 nodes)"]
+  K1 --> KSQL[ksqlDB<br/>Windowed Agg, Anomaly Scoring]
+  KSQL --> TSDB[TimescaleDB<br/>Hypertables + Continuous Agg]
+  TSDB --> Viz[Grafana/Tableau<br/>Live Dashboard]
+
+
+
+
+flowchart LR
+  Root[Root CA] --> Int[Intermediate CA]
+  Int --> Dev[Device X.509 Cert]
+  Dev -->|mTLS| EMQX[EMQX Broker]
+  note right of EMQX: Verify client cert<br/>CN/OU → device_id
+
+
+
+sequenceDiagram
+  participant Device
+  participant LocalBuffer
+  participant Broker as EMQX
+  Device->>LocalBuffer: enqueue(samples)
+  Device->>Broker: publish()
+  Broker-->>Device: ack(QoS1)
+  note over Device,Broker: Network outage
+  Device->>LocalBuffer: enqueue(backlog)
+  note over Device: Reconnect
+  Device->>Broker: backfill(batch, rate-limit)
+
+
+
+flowchart LR
+  EMQX[EMQX Broker] --Bridge--> KC["Kafka Connect (MQTT Source)"]
+  KC --> KRaw[Topic: converter.raw]
+  KRaw --> KFeat[Topic: converter.features]
+  KFeat --> KAlert[Topic: converter.alerts]
+  subgraph Kafka["Kafka Cluster"]
+    KRaw
+    KFeat
+    KAlert
+  end
+
+
+
+
+flowchart TB
+  Wave[Voltage Waveform] --> FFT[FFT per window]
+  FFT --> Harm["Sum(harmonics)"]
+  Wave --> Fund[Fundamental RMS]
+  Harm --> THD["THD = Sum(harmonics)/Fundamental"]
+
+
+
+
+
+flowchart LR
+  Raw[raw telemetry] --> FE[Feature Extractor<br/>THD, dv/dt, temp]
+  FE --> Score["Anomaly Scorer<br/>(ksqlDB/udf or microservice)"]
+  Score --> Low[Topic: alerts.low]
+  Score --> High[Topic: alerts.high]
+
+
+
+flowchart LR
+  subgraph Edge["Edge (Converters)"]
+    S1[Voltage/Current/Temp<br/>10 kHz] --> G1[MQTT Client<br/>TLS 1.3, QoS 1]
+  end
+
+  G1 -->|Publish| B1[EMQX Broker Cluster<br/>X.509 Auth]
+  B1 -->|Bridge| K1["Kafka Cluster (3 nodes)"]
+  K1 --> KSQL[ksqlDB<br/>Windowed Agg, Anomaly Scoring]
+  KSQL --> TSDB[TimescaleDB<br/>Hypertables + Continuous Agg]
+  TSDB --> Viz[Grafana/Tableau<br/>Live Dashboard]
+
+
+
+flowchart LR
+  Root[Root CA] --> Int[Intermediate CA]
+  Int --> Dev[Device X.509 Cert]
+  Dev -->|mTLS| EMQX[EMQX Broker]
+  note right of EMQX: Verify client cert<br/>CN/OU → device_id
+
+
+
+sequenceDiagram
+  participant Device
+  participant LocalBuffer
+  participant Broker as EMQX
+  Device->>LocalBuffer: enqueue(samples)
+  Device->>Broker: publish()
+  Broker-->>Device: ack(QoS1)
+  note over Device,Broker: Network outage
+  Device->>LocalBuffer: enqueue(backlog)
+  note over Device: Reconnect
+  Device->>Broker: backfill(batch, rate-limit)
+
+
+
+flowchart LR
+  EMQX[EMQX Broker] --Bridge--> KC["Kafka Connect (MQTT Source)"]
+  KC --> KRaw[Topic: converter.raw]
+  KRaw --> KFeat[Topic: converter.features]
+  KFeat --> KAlert[Topic: converter.alerts]
+  subgraph Kafka["Kafka Cluster"]
+    KRaw
+    KFeat
+    KAlert
+  end
+
+
+flowchart TB
+  Wave[Voltage Waveform] --> FFT[FFT per window]
+  FFT --> Harm["Sum(harmonics)"]
+  Wave --> Fund[Fundamental RMS]
+  Harm --> THD["THD = Sum(harmonics)/Fundamental"]
+
+
+flowchart LR
+  TSDB[TimescaleDB] --> Py[Python ETL<br/>feature store]
+  Py --> Train["Model Retrain<br/>(THD/dvdt anomalies)"]
+  Train --> Registry[Model Registry]
+  Registry --> Deploy["Deploy (ksqlDB UDF / microservice)"]
+
+
+flowchart TB
+  Raw[Raw Hypertable] --> Agg1[Continuous Aggregate: 1s]
+  Agg1 --> Agg2[Continuous Aggregate: 1min]
+  Raw ---|retain 7d| Raw
+  Agg1 ---|retain 30d| Agg1
+  Agg2 ---|retain 365d| Agg2
+
+
+flowchart TB
+  Raw[Raw Hypertable] --> Agg1[Continuous Aggregate: 1s]
+  Agg1 --> Agg2[Continuous Aggregate: 1min]
+  Raw ---|retain 7d| Raw
+  Agg1 ---|retain 30d| Agg1
+  Agg2 ---|retain 365d| Agg2
+
+
+flowchart LR
+  Raw[raw telemetry] --> FE[Feature Extractor<br/>THD, dv/dt, temp]
+  FE --> Score["Anomaly Scorer<br/>(ksqlDB/udf or microservice)"]
+  Score --> Low[Topic: alerts.low]
+  Score --> High[Topic: alerts.high]
+
+
+flowchart LR
+  TSDB[TimescaleDB] --> Py[Python ETL<br/>feature store]
+  Py --> Train["Model Retrain<br/>(THD/dvdt anomalies)"]
+  Train --> Registry[Model Registry]
+  Registry --> Deploy["Deploy (ksqlDB UDF / microservice)"]
+
+
+
+
+
+
