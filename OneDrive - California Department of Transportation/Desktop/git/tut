@@ -1,0 +1,385 @@
+Title
+Ingest & Store Real-Time Telemetry from Power Converters via IoT Protocols
+
+Tutorial Breakdown (60 Minutes)
+0–5 min: Introduction & Motivation
+
+Why this matters: High-frequency telemetry for predictive maintenance and grid optimization.
+Challenges: EMI environments, kilohertz sampling, secure transport, scalable storage.
+Goal: Build an open-source pipeline (MQTT → Kafka → TimescaleDB) with sub-200 ms latency.
+
+
+5–15 min: Edge Telemetry Collection (MQTT)
+
+Concepts:
+
+MQTT basics: lightweight pub/sub for IoT.
+QoS levels and TLS 1.3 for secure transport.
+
+
+Implementation:
+
+Converter-embedded MQTT clients.
+Local buffering and backfill strategies.
+
+
+Demo:
+
+Show MQTT client publishing voltage/current data at 10 kHz.
+Use EMQX broker with X.509 certificates.
+
+
+
+
+15–25 min: Transport & Buffering (Apache Kafka)
+
+Why Kafka?
+
+Fault-tolerant buffering, horizontal scalability.
+
+
+Setup:
+
+Kafka cluster (3 nodes).
+Kafka Connect bridge from MQTT.
+
+
+Demo:
+
+Visualize message flow from MQTT → Kafka topics.
+Show partitioning for high throughput (12.9 MB/s ingest).
+
+
+
+
+25–35 min: Stream Processing (ksqlDB)
+
+Real-time analytics:
+
+Windowed aggregations for THD and dv/dt.
+Anomaly scoring for predictive maintenance.
+
+
+Demo:
+
+Run ksqlDB queries on Kafka topics.
+Show real-time THD calculation and alert generation.
+
+
+
+
+35–45 min: Time-Series Storage (TimescaleDB)
+
+Why TimescaleDB?
+
+Hypertables for high-velocity data.
+Continuous aggregates for fast queries.
+
+
+Policies:
+
+Retention and compression for cost control.
+
+
+Demo:
+
+Insert telemetry into TimescaleDB.
+Query historical trends efficiently.
+
+
+
+
+45–55 min: Visualization & ML Integration
+
+Dashboards:
+
+Grafana/Tableau for live monitoring.
+
+
+ML pipeline:
+
+Python API for batch export and retraining.
+
+
+Demo:
+
+Show Grafana dashboard with real-time THD and anomaly alerts.
+Briefly outline ML retraining workflow.
+
+
+
+
+55–60 min: Wrap-Up & Q&A
+
+Key takeaways:
+
+Open-source stack for real-time telemetry.
+Predictive maintenance benefits (25 min earlier fault alerts).
+
+
+Resources:
+
+GitHub repo with sample configs.
+References for deeper reading.
+
+
+
+
+✅ Suggested Materials
+
+Slides: Architecture diagrams, code snippets.
+Live Demo: MQTT → Kafka → TimescaleDB → Grafana.
+Sample Configs: Docker Compose for quick setup.
+
+
+Would you like me to create the full slide deck outline with speaker notes for this 1-hour tutorial? Or draft a hands-on lab guide with commands and configs so attendees can follow along?Provide your feedback on BizChatYou said: COMPLETE SPEECHCopilot said: CopilotHere’s a complete speech script for your 1-hour tutorial based on the outline you provided. It includes transitions, explanations, and demo cues so you can deliver it smoothly.
+
+✅ Complete Speech for 1-Hour Tutorial
+Title: Ingest & Store Real-Time Telemetry from Power Converters via IoT Protocols
+
+Opening (0–5 min)
+[Slide: Title + Abstract]
+“Good morning/afternoon everyone! Thank you for joining this tutorial on Ingesting and Storing Real-Time Telemetry from Power Converters using IoT Protocols.
+Why is this important? Power-electronic converters—like grid-tied inverters, DC–DC modules, and EV drives—generate rich telemetry streams: voltage, current, temperature, and switching states. Capturing these signals in real time is critical for adaptive control, energy efficiency, and early fault detection.
+But here’s the challenge:
+
+Harsh EMI environments
+Kilohertz sampling rates
+Need for secure, lightweight transport
+Scalable storage for analytics
+
+Today, I’ll show you how to build an open-source pipeline using MQTT, Apache Kafka, and TimescaleDB that achieves sub-200 ms latency at ≥10 kHz sample rates. We’ll also cover real-time feature extraction, dashboards, and ML integration.”
+
+Section 1: Edge Telemetry Collection (5–15 min)
+[Slide: MQTT Architecture]
+“At the edge, converters publish telemetry using MQTT, a lightweight pub/sub protocol ideal for IoT.
+Key points:
+
+QoS 1 ensures at-least-once delivery.
+TLS 1.3 secures data in transit.
+X.509 certificates authenticate devices.
+
+We also implement local buffering and backfill strategies so data isn’t lost during network outages.
+Demo:
+
+Show MQTT client publishing voltage/current data at 10 kHz.
+Highlight EMQX broker clustering and certificate-based security.”
+
+
+Section 2: Transport & Buffering with Kafka (15–25 min)
+[Slide: MQTT → Kafka Bridge]
+“Next, we need a fault-tolerant backbone. Enter Apache Kafka.
+Why Kafka?
+
+Horizontal scalability
+Persistent log for replay
+High throughput
+
+We use Kafka Connect to bridge MQTT topics into a 3-node Kafka cluster. This setup sustained 12.9 MB/s ingest in our pilot.
+Demo:
+
+Show message flow from MQTT → Kafka topics.
+Explain partitioning for parallel processing.”
+
+
+Section 3: Real-Time Stream Processing (25–35 min)
+[Slide: ksqlDB Queries]
+“Raw telemetry is great, but we need actionable insights.
+Using ksqlDB, we perform:
+
+Windowed aggregations for THD and dv/dt peaks.
+Anomaly scoring for predictive maintenance.
+
+Demo:
+
+Run a ksqlDB query to compute THD in real time.
+Show anomaly alerts published to a Kafka topic.”
+
+
+Section 4: Time-Series Storage (35–45 min)
+[Slide: TimescaleDB Hypertables]
+“Processed data flows into TimescaleDB, a PostgreSQL extension optimized for time-series data.
+Features:
+
+Hypertables for high-velocity inserts.
+Continuous aggregates for fast queries.
+Retention and compression policies to control storage costs.
+
+Demo:
+
+Insert telemetry into TimescaleDB.
+Query historical THD trends efficiently.”
+
+
+Section 5: Visualization & ML Integration (45–55 min)
+[Slide: Grafana Dashboard]
+“Finally, we visualize and integrate with ML workflows.
+
+Grafana/Tableau for live dashboards.
+Python API for batch export and model retraining.
+
+Demo:
+
+Show Grafana dashboard with real-time THD and anomaly alerts.
+Briefly outline ML retraining pipeline for predictive maintenance.”
+
+
+Closing & Q&A (55–60 min)
+[Slide: Key Takeaways]
+“To wrap up:
+
+We built an open-source IoT pipeline: MQTT → Kafka → TimescaleDB → Grafana.
+Achieved sub-200 ms latency and 25 min earlier fault alerts compared to SCADA.
+This architecture enables smarter grid integration and predictive maintenance.
+
+Resources:
+
+GitHub repo with configs and Docker Compose.
+References for deeper reading.
+
+Thank you! I’ll now take your questions.”
+
+✅ Would you like me to also prepare:
+
+Full Slide Deck Outline with Speaker Notes (ready for PowerPoint/Keynote)?
+Hands-On Lab Guide with Docker Compose configs and step-by-step commands for MQTT, Kafka, TimescaleDB, and Grafana?
+Printable Cheat Sheet summarizing commands and architecture diagrams?
+
+Which one should I create first?Provide your feedback on BizChatYou said: yesCopilot said: CopilotGreat! I’ll start with the Full Slide Deck Outline with Speaker Notes for your 1-hour tutorial. This will give you a ready-to-use structure for PowerPoint or Keynote.
+
+✅ Slide Deck Outline with Speaker Notes
+
+Slide 1: Title
+Title:
+Ingest & Store Real-Time Telemetry from Power Converters via IoT Protocols
+Subtitle:
+IEEE PARC 2026 Tutorial
+Speaker Notes:
+“Welcome everyone! Today we’ll explore how to build an open-source IoT pipeline for real-time telemetry ingestion and storage from power converters.”
+
+Slide 2: Agenda
+
+Introduction & Motivation
+Edge Telemetry (MQTT)
+Transport & Buffering (Kafka)
+Stream Processing (ksqlDB)
+Time-Series Storage (TimescaleDB)
+Visualization & ML Integration
+Wrap-Up & Q&A
+Speaker Notes:
+“This is our roadmap for the next hour. Each section includes concepts and a quick demo.”
+
+
+Slide 3: Why Real-Time Telemetry?
+
+Adaptive control
+Energy efficiency optimization
+Early fault detection
+Speaker Notes:
+“Converters emit high-frequency data streams. Capturing these in real time enables smarter grids and predictive maintenance.”
+
+
+Slide 4: Challenges
+
+Harsh EMI environments
+Kilohertz sampling rates
+Secure, lightweight transport
+Scalable storage
+Speaker Notes:
+“These challenges make traditional SCADA systems insufficient for modern needs.”
+
+
+Slide 5: Architecture Overview
+Diagram: MQTT → Kafka → TimescaleDB → Grafana
+Speaker Notes:
+“This is the pipeline we’ll build today using open-source tools.”
+
+Slide 6: Edge Telemetry (MQTT)
+
+Lightweight pub/sub protocol
+TLS 1.3 + X.509 certificates
+QoS 1 for reliability
+Speaker Notes:
+“MQTT is ideal for IoT telemetry. We’ll secure it with TLS and certificates.”
+
+
+Slide 7: Demo – MQTT Setup
+Screenshot: EMQX broker dashboard
+Speaker Notes:
+“Here’s the MQTT broker running with TLS and device authentication.”
+
+Slide 8: Transport & Buffering (Kafka)
+
+Fault-tolerant backbone
+Kafka Connect bridge
+Sustained 12.9 MB/s ingest
+Speaker Notes:
+“Kafka ensures durability and scalability for high-throughput telemetry.”
+
+
+Slide 9: Demo – Kafka Flow
+Screenshot: Kafka topics and partitions
+Speaker Notes:
+“Observe how MQTT messages flow into Kafka topics for processing.”
+
+Slide 10: Stream Processing (ksqlDB)
+
+Windowed aggregations (THD, dv/dt)
+Real-time anomaly scoring
+Speaker Notes:
+“ksqlDB lets us process streams without writing complex code.”
+
+
+Slide 11: Demo – ksqlDB Query
+Screenshot: THD calculation query
+Speaker Notes:
+“Here’s a live query computing THD from telemetry streams.”
+
+Slide 12: Time-Series Storage (TimescaleDB)
+
+Hypertables for fast inserts
+Continuous aggregates
+Retention policies
+Speaker Notes:
+“TimescaleDB is optimized for time-series data and integrates with PostgreSQL.”
+
+
+Slide 13: Demo – TimescaleDB Query
+Screenshot: SQL query for historical THD
+Speaker Notes:
+“Notice how quickly we can retrieve historical trends.”
+
+Slide 14: Visualization & ML Integration
+
+Grafana/Tableau dashboards
+Python API for ML retraining
+Speaker Notes:
+“Visualization and ML integration complete the pipeline for predictive maintenance.”
+
+
+Slide 15: Demo – Grafana Dashboard
+Screenshot: Real-time THD and anomaly alerts
+Speaker Notes:
+“This dashboard shows live telemetry and alerts for anomalies.”
+
+Slide 16: Key Takeaways
+
+Open-source IoT pipeline
+Sub-200 ms latency
+Predictive maintenance benefits
+Speaker Notes:
+“By leveraging MQTT, Kafka, TimescaleDB, and Grafana, we enable smarter grid integration.”
+
+
+Slide 17: References & Resources
+
+GitHub repo
+IEEE papers
+Docker Compose configs
+Speaker Notes:
+“Here are resources for further exploration.”
+
+
+Slide 18: Q&A
+Speaker Notes:
+“Thank you! I’m happy to take your questions.”
