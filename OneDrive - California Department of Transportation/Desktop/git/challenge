@@ -1,0 +1,26 @@
+Harsh EMI Environments
+
+What it means: Power-electronic converters operate in environments with strong electromagnetic interference (EMI) due to high switching frequencies and large currents.
+Impact: EMI can corrupt data signals, cause packet loss, and disrupt wireless communication.
+Solution: Use shielded cabling, proper grounding, and protocols resilient to interference (e.g., MQTT over TLS with retries and QoS). Edge buffering helps prevent data loss during transient outages.
+
+
+2. Kilohertz Sampling Rates
+
+What it means: Telemetry from converters often needs to capture fast-changing electrical signals (voltage, current) at rates like 10 kHz or higher.
+Impact: High sampling rates generate large data volumes—tens of MB/s per device—which stresses network bandwidth and storage systems.
+Solution: Lightweight protocols (MQTT) for efficient transport, and stream processing (Kafka + ksqlDB) to aggregate or downsample data before storage.
+
+
+3. Secure, Lightweight Transport
+
+What it means: Data must be transmitted securely without adding heavy overhead that could increase latency or reduce throughput.
+Impact: Traditional protocols like HTTP are too heavy for real-time telemetry; insecure transport risks data tampering or unauthorized access.
+Solution: MQTT with TLS 1.3 encryption and X.509 certificate-based authentication provides confidentiality and integrity while remaining lightweight.
+
+
+4. Scalable Storage
+
+What it means: Telemetry pipelines must handle billions of time-stamped records efficiently for both real-time dashboards and historical analysis.
+Impact: A standard relational database will struggle with high ingest rates and time-series queries.
+Solution: Use time-series databases like TimescaleDB or InfluxDB, which support hypertables, compression, and retention policies for cost-effective scalability.
