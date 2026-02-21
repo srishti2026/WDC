@@ -10,9 +10,11 @@ But it is a step that will be converted into AI, and it is important to understa
 Motivation for this tutorial is High-frequency telemetry for predictive maintenance and grid optimization. 
 because of some challenges like Harsh EMI environments, Kilohertz Sampling Rates, We want to build a Secure, Lightweight Transport and Scalable storage.
 Harsh EMI Environments
-What it means: Power-electronic converters operate in environments with strong electromagnetic interference (EMI) due to high switching frequencies and large currents.
+What it means: Power-electronic converters operate in environments with strong electromagnetic interference (EMI) due to high switching frequencies and
+large currents.
 Impact: EMI can corrupt data signals, cause packet loss, and disrupt wireless communication.
-Solution: Use shielded cabling, proper grounding, and protocols resilient to interference (e.g., MQTT over TLS with retries and QoS). Edge buffering helps prevent data loss during transient outages.
+Solution: Use shielded cabling, proper grounding, and protocols resilient to interference (e.g., MQTT over TLS with retries and QoS). 
+Edge buffering helps prevent data loss during transient outages.
 
 2. Kilohertz Sampling Rates
 What it means: Telemetry from converters often needs to capture fast-changing electrical signals (voltage, current) at rates like 10 kHz or higher.
