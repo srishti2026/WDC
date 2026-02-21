@@ -31,6 +31,10 @@ Solution: Use time-series databases like TimescaleDB or InfluxDB, which support 
 
 In this tutorial, I'm going to walk through connecting the EMQX open-source MQTT broker to TimescaleDB. 
 TimescaleDB is a powerful time-series database with a number of features to make our database run smoother, faster, and smarter.
+
+Architechture
+
+
 First, we want to create a TimescaleDB trial account and create a service. 
 Make note of the region that we're creating our service in, 
 as it will need to be in the same region as our EMQX instance that we'll create later. 
