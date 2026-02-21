@@ -8,7 +8,7 @@ and we all know that AI has been taking over everything and you must be wonderin
 But it is a step that will be converted into AI, and it is important to understand how are we going to utilize this, which can be enhanced as an AI in the future.
 
 Motivation for this tutorial is High-frequency telemetry for predictive maintenance and grid optimization. 
-because of some challenges like Harsh EMI environments, Kilohertz Sampling Rates, We can build a Secure, Lightweight Transport and Scalable storage.
+because of some challenges like Harsh EMI environments, Kilohertz Sampling Rates, We want to build a Secure, Lightweight Transport and Scalable storage.
 Harsh EMI Environments
 What it means: Power-electronic converters operate in environments with strong electromagnetic interference (EMI) due to high switching frequencies and large currents.
 Impact: EMI can corrupt data signals, cause packet loss, and disrupt wireless communication.
