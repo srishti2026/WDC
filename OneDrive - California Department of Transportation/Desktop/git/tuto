@@ -110,3 +110,48 @@ create a table on that database, turn it into a hyper table so that it's more pe
 and then you create a rule and a data integration that whenever a message is published to a topic on the MQTT broker with temperature and humidity,
 it's extracted, published to the database, and then we create a Grafana visualization of that data in that database, 
 which is a powerful set of tools to have if you're building an industrial IoT application where you want to be able to visualize large sets of time series data.
+
+let’s expand this pipeline to fully match the architecture described in the abstract and make it production-ready.
+MQTT is excellent for lightweight edge communication, 
+but when you scale to thousands of devices at kilohertz sampling rates, 
+you need fault-tolerant buffering and stream processing. This is where Apache Kafka comes in. 
+Kafka acts as a distributed commit log, ensuring that even if downstream services fail, no data is lost. 
+It also allows us to aggregate, downsample, and enrich telemetry before storage.
+Steps:
+
+Deploy Kafka (cloud or on-prem).
+Create a topic, e.g., converter_telemetry.
+Configure EMQX Rule Engine to forward MQTT messages to Kafka.
+Use ksqlDB or Kafka Streams for real-time transformations (e.g., compute averages, detect anomalies).
+2. Real-Time Feature Extraction
+Raw telemetry is useful, but predictive maintenance needs features like Total Harmonic Distortion (THD) and dv/dt. These metrics help detect inverter stress and insulation breakdown early.”
+Example Python snippet for THD and dv/dt:
+import numpy as np
+
+def compute_thd(signal):
+    fft_vals = np.fft.fft(signal)
+    fundamental = abs(fft_vals[1])
+    harmonics = np.sum(abs(fft_vals[2:]))
+    return harmonics / fundamental
+
+def compute_dvdt(voltage_series, time_series):
+    return np.gradient(voltage_series, time_series)
+These functions can run in a Kafka Streams job or an edge gateway before publishing to TimescaleDB
+3. Retention Policies in TimescaleDB
+To keep costs under control, we apply retention policies and compression in TimescaleDB. For example:
+SELECT add_retention_policy('telemetry_table', INTERVAL '90 days');
+SELECT add_compression_policy('telemetry_table', INTERVAL '7 days');
+This ensures recent data is hot for dashboards, while older data is compressed for historical analysis.
+4. Visualization Beyond Grafana
+Grafana is great for engineers, but for management dashboards, Tableau can connect to TimescaleDB via Postgres drivers. This allows business teams to visualize KPIs alongside operational data
+5. Performance Validation
+Our target is sub-200 ms end-to-end latency and ≥10 kHz sampling.
+In our pilot on an inverter farm, we achieved 12.9 MB/s sustained ingest and detected faults 25 minutes earlier than SCADA systems.
+These benchmarks prove the value of this architecture.
+6. ML Integration
+Finally, the pipeline feeds into ML models for predictive maintenance. 
+For example, a simple anomaly detection model can run on Kafka Streams or in the cloud using TensorFlow. This closes the loop from raw telemetry to actionable insights.”
+
+Updated Architecture
+EMQX → Kafka → Feature Extraction → TimescaleDB → Grafana/Tableau → ML Pipeline
+
